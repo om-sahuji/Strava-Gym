@@ -1,0 +1,45 @@
+name: Android debug APK
+
+# Builds the debug APK for the Strava/Runs work in progress.
+# Unit tests are intentionally not run here (DateUtilTest is known broken upstream).
+on:
+  push:
+    branches:
+      - strava-runs
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # The project uses jvmToolchain(17) and AGP 8.1.0, which require JDK 17.
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      # compileSdk 33 / buildTools 34.0.0, installed only if the runner image lacks them.
+      - name: Ensure Android SDK packages
+        run: |
+          SDKMANAGER="${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager"
+          yes | "${SDKMANAGER}" --licenses > /dev/null 2>&1 || true
+          "${SDKMANAGER}" "platform-tools" "platforms;android-33" "build-tools;34.0.0"
+
+      - name: Build debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
