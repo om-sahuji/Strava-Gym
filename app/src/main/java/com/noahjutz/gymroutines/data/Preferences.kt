@@ -60,6 +60,12 @@ sealed class AppPrefs<T>(val key: Preferences.Key<T>, val defaultValue: T) {
         key = booleanPreferencesKey("updateRoutineAfterWorkout"),
         defaultValue = false
     )
+
+    /** Epoch seconds of the last successful Strava sync, 0 if never synced. */
+    data object LastStravaSync : AppPrefs<Long>(
+        key = longPreferencesKey("lastStravaSync"),
+        defaultValue = 0L
+    )
 }
 
 suspend fun DataStore<Preferences>.resetAppSettings() {

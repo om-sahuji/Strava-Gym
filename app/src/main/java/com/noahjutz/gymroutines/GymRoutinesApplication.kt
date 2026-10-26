@@ -36,6 +36,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.noahjutz.gymroutines.data.AppPrefs
 import com.noahjutz.gymroutines.data.resetAppSettings
+import com.noahjutz.gymroutines.data.strava.StravaSyncer
 import com.noahjutz.gymroutines.di.koinModule
 import com.noahjutz.gymroutines.ui.MainActivity
 import com.noahjutz.gymroutines.util.isFirstRun
@@ -50,6 +51,7 @@ const val PERSISTENT_WORKOUT_CHANNEL_ID = "persistent-workout-notification"
 
 class GymRoutinesApplication : Application() {
     private val preferences: DataStore<Preferences> by inject()
+    private val stravaSyncer: StravaSyncer by inject()
     private val scope = CoroutineScope(Dispatchers.Default)
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -59,6 +61,12 @@ class GymRoutinesApplication : Application() {
         startKoin {
             androidContext(this@GymRoutinesApplication)
             modules(koinModule)
+        }
+
+        // Automatic Strava sync on app open, if the last successful sync is older than 30 minutes.
+        // Does nothing when Strava is not connected.
+        scope.launch {
+            runCatching { stravaSyncer.syncIfStale() }
         }
 
         scope.launch {

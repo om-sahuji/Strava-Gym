@@ -22,6 +22,7 @@ import androidx.room.Room
 import com.noahjutz.gymroutines.data.*
 import com.noahjutz.gymroutines.data.strava.StravaClient
 import com.noahjutz.gymroutines.data.strava.StravaCredentials
+import com.noahjutz.gymroutines.data.strava.StravaSyncer
 import com.noahjutz.gymroutines.ui.exercises.editor.ExerciseEditorViewModel
 import com.noahjutz.gymroutines.ui.exercises.list.ExerciseListViewModel
 import com.noahjutz.gymroutines.ui.exercises.picker.ExercisePickerViewModel
@@ -99,6 +100,14 @@ val koinModule = module {
 
     single {
         StravaClient(credentials = get())
+    }
+
+    single {
+        StravaSyncer(
+            client = get(),
+            runRepository = get(),
+            preferences = get(),
+        )
     }
 
     viewModel {

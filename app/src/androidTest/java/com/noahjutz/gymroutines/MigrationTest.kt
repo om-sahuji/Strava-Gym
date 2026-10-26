@@ -47,7 +47,8 @@ class MigrationTest {
                 MIGRATION_39_40,
                 MIGRATION_40_41,
                 MIGRATION_41_42,
-                MIGRATION_42_43
+                MIGRATION_42_43,
+                MIGRATION_43_44
             )
             .build()
             .apply {
@@ -134,6 +135,24 @@ class MigrationTest {
             it
         }
         db = helper.runMigrationsAndValidate(TEST_DB, 42, true, MIGRATION_41_42)
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun migrate43to44() {
+        var db = helper.createDatabase(TEST_DB, 43).use {
+            it.execSQL("INSERT INTO routine_table VALUES ('Full Body', 0, 0)")
+            it
+        }
+        db = helper.runMigrationsAndValidate(TEST_DB, 44, true, MIGRATION_43_44)
+        db.execSQL(
+            "INSERT INTO run_table VALUES (123, 'Morning Run', 1709619300, 5000.0, 1500, 1600, 12.0, 148.0, '_p~iF', 'Run')"
+        )
+        db.query("SELECT name, distanceMeters FROM run_table WHERE stravaId=123").use { run ->
+            Assert.assertTrue(run.moveToFirst())
+            Assert.assertEquals("Morning Run", run.getString(0))
+            Assert.assertEquals(5000.0, run.getDouble(1), 0.001)
+        }
     }
 
     @Test
