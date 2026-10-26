@@ -41,6 +41,7 @@ fun AppSettings(
     navToAppearanceSettings: () -> Unit,
     navToDataSettings: () -> Unit,
     navToGeneralSettings: () -> Unit,
+    navToStravaSettings: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -74,6 +75,11 @@ fun AppSettings(
                 modifier = Modifier.clickable(onClick = navToDataSettings),
                 text = { Text(stringResource(R.string.screen_data_settings)) },
                 icon = { Icon(Icons.Default.Shield, null) },
+            )
+            ListItem(
+                modifier = Modifier.clickable(onClick = navToStravaSettings),
+                text = { Text(stringResource(R.string.screen_strava_settings)) },
+                icon = { Icon(Icons.Default.DirectionsRun, null) },
             )
             Divider()
             ListItem(

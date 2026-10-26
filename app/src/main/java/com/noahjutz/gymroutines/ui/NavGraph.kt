@@ -49,6 +49,7 @@ import com.noahjutz.gymroutines.ui.settings.about.LicensesList
 import com.noahjutz.gymroutines.ui.settings.appearance.AppearanceSettings
 import com.noahjutz.gymroutines.ui.settings.data.DataSettings
 import com.noahjutz.gymroutines.ui.settings.general.GeneralSettings
+import com.noahjutz.gymroutines.ui.settings.strava.StravaSettings
 import com.noahjutz.gymroutines.ui.workout.completed.WorkoutCompleted
 import com.noahjutz.gymroutines.ui.workout.in_progress.WorkoutInProgress
 import com.noahjutz.gymroutines.ui.workout.insights.WorkoutInsights
@@ -69,6 +70,7 @@ enum class Screen {
     appearanceSettings,
     dataSettings,
     generalSettings,
+    stravaSettings,
     about,
     licenses,
     workoutCompleted
@@ -189,8 +191,12 @@ fun NavGraph(
                     navToAbout = { navController.navigate(Screen.about.name) },
                     navToAppearanceSettings = { navController.navigate(Screen.appearanceSettings.name) },
                     navToDataSettings = { navController.navigate(Screen.dataSettings.name) },
-                    navToGeneralSettings = { navController.navigate(Screen.generalSettings.name) }
+                    navToGeneralSettings = { navController.navigate(Screen.generalSettings.name) },
+                    navToStravaSettings = { navController.navigate(Screen.stravaSettings.name) }
                 )
+            }
+            composable(Screen.stravaSettings.name) {
+                StravaSettings(popBackStack = { navController.popBackStack() })
             }
             composable(Screen.appearanceSettings.name) {
                 AppearanceSettings(popBackStack = { navController.popBackStack() })

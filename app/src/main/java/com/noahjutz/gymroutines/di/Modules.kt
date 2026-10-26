@@ -20,6 +20,8 @@ package com.noahjutz.gymroutines.di
 
 import androidx.room.Room
 import com.noahjutz.gymroutines.data.*
+import com.noahjutz.gymroutines.data.strava.StravaClient
+import com.noahjutz.gymroutines.data.strava.StravaCredentials
 import com.noahjutz.gymroutines.ui.exercises.editor.ExerciseEditorViewModel
 import com.noahjutz.gymroutines.ui.exercises.list.ExerciseListViewModel
 import com.noahjutz.gymroutines.ui.exercises.picker.ExercisePickerViewModel
@@ -29,6 +31,7 @@ import com.noahjutz.gymroutines.ui.routines.list.RoutineListViewModel
 import com.noahjutz.gymroutines.ui.settings.appearance.AppearanceSettingsViewModel
 import com.noahjutz.gymroutines.ui.settings.data.DataSettingsViewModel
 import com.noahjutz.gymroutines.ui.settings.general.GeneralSettingsViewModel
+import com.noahjutz.gymroutines.ui.settings.strava.StravaSettingsViewModel
 import com.noahjutz.gymroutines.ui.workout.completed.WorkoutCompletedViewModel
 import com.noahjutz.gymroutines.ui.workout.in_progress.WorkoutInProgressViewModel
 import com.noahjutz.gymroutines.ui.workout.insights.WorkoutInsightsViewModel
@@ -88,6 +91,14 @@ val koinModule = module {
 
     factory {
         RunRepository(runDao = get())
+    }
+
+    single {
+        StravaCredentials(context = androidContext())
+    }
+
+    single {
+        StravaClient(credentials = get())
     }
 
     viewModel {
@@ -167,6 +178,14 @@ val koinModule = module {
     viewModel {
         GeneralSettingsViewModel(
             preferences = get()
+        )
+    }
+
+    viewModel {
+        StravaSettingsViewModel(
+            client = get(),
+            credentials = get(),
+            application = androidApplication(),
         )
     }
 
