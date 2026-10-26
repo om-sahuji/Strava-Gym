@@ -18,6 +18,9 @@
 
 package com.noahjutz.gymroutines.util
 
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import kotlin.math.roundToInt
 
@@ -66,3 +69,12 @@ fun formatElevation(elevationMeters: Double): String =
 /** Formats heart rate, e.g. `152 bpm`, or a placeholder if unknown. */
 fun formatHeartRate(heartRate: Double?): String =
     heartRate?.let { String.format(Locale.US, "%.0f bpm", it) } ?: RUN_VALUE_PLACEHOLDER
+
+/** Formats a run start time (epoch seconds) with the user's locale, e.g. `Mar 5, 2024, 6:15 AM`. */
+fun formatRunDate(epochSec: Long): String =
+    DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
+        .format(Date(epochSec * 1000))
+
+/** Short week label for the weekly chart, e.g. `4 Mar`. */
+fun formatWeekLabel(epochSec: Long): String =
+    SimpleDateFormat("d MMM", Locale.getDefault()).format(Date(epochSec * 1000))

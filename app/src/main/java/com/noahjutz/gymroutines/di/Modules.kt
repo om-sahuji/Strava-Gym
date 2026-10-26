@@ -29,6 +29,8 @@ import com.noahjutz.gymroutines.ui.exercises.picker.ExercisePickerViewModel
 import com.noahjutz.gymroutines.ui.main.MainScreenViewModel
 import com.noahjutz.gymroutines.ui.routines.editor.RoutineEditorViewModel
 import com.noahjutz.gymroutines.ui.routines.list.RoutineListViewModel
+import com.noahjutz.gymroutines.ui.runs.RunDetailViewModel
+import com.noahjutz.gymroutines.ui.runs.RunsViewModel
 import com.noahjutz.gymroutines.ui.settings.appearance.AppearanceSettingsViewModel
 import com.noahjutz.gymroutines.ui.settings.data.DataSettingsViewModel
 import com.noahjutz.gymroutines.ui.settings.general.GeneralSettingsViewModel
@@ -187,6 +189,20 @@ val koinModule = module {
     viewModel {
         GeneralSettingsViewModel(
             preferences = get()
+        )
+    }
+
+    viewModel {
+        RunsViewModel(
+            runRepository = get(),
+            syncer = get(),
+        )
+    }
+
+    viewModel { params ->
+        RunDetailViewModel(
+            runRepository = get(),
+            stravaId = params.get(),
         )
     }
 

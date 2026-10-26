@@ -42,6 +42,8 @@ import com.noahjutz.gymroutines.ui.exercises.editor.ExerciseEditor
 import com.noahjutz.gymroutines.ui.exercises.list.ExerciseList
 import com.noahjutz.gymroutines.ui.exercises.picker.ExercisePickerSheet
 import com.noahjutz.gymroutines.ui.routines.editor.RoutineEditor
+import com.noahjutz.gymroutines.ui.runs.RunDetail
+import com.noahjutz.gymroutines.ui.runs.Runs
 import com.noahjutz.gymroutines.ui.routines.list.RoutineList
 import com.noahjutz.gymroutines.ui.settings.AppSettings
 import com.noahjutz.gymroutines.ui.settings.about.AboutApp
@@ -56,9 +58,13 @@ import com.noahjutz.gymroutines.ui.workout.insights.WorkoutInsights
 import com.noahjutz.gymroutines.ui.workout.viewer.WorkoutViewer
 import kotlin.time.ExperimentalTime
 
+private const val STRAVA_ID_ARG = "stravaId"
+
 @Suppress("EnumEntryName")
 enum class Screen {
     insights,
+    runs,
+    runDetail,
     routineList,
     routineEditor,
     exerciseList,
@@ -99,6 +105,23 @@ fun NavGraph(
                 WorkoutInsights(
                     navToWorkoutEditor = { workoutId -> navController.navigate("${Screen.workoutViewer}/$workoutId") },
                     navToSettings = { navController.navigate(Screen.settings.name) }
+                )
+            }
+            composable(Screen.runs.name) {
+                Runs(
+                    navToRunDetail = { stravaId ->
+                        navController.navigate("${Screen.runDetail}/$stravaId")
+                    },
+                    navToSettings = { navController.navigate(Screen.settings.name) }
+                )
+            }
+            composable(
+                route = "${Screen.runDetail}/{$STRAVA_ID_ARG}",
+                arguments = listOf(navArgument(STRAVA_ID_ARG) { type = NavType.LongType })
+            ) { backStackEntry ->
+                RunDetail(
+                    stravaId = backStackEntry.arguments!!.getLong(STRAVA_ID_ARG),
+                    popBackStack = { navController.popBackStack() },
                 )
             }
             composable(

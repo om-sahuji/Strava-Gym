@@ -6,6 +6,7 @@ import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DirectionsRun
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.ViewAgenda
@@ -41,12 +42,19 @@ sealed class BottomNavItem(
         name = R.string.screen_insights,
         icon = Icons.Default.Insights
     )
+
+    data object Runs : BottomNavItem(
+        route = Screen.runs.name,
+        name = R.string.screen_runs,
+        icon = Icons.Default.DirectionsRun
+    )
 }
 
 val bottomNavItems = listOf(
     BottomNavItem.Routines,
     BottomNavItem.Exercises,
     BottomNavItem.Workouts,
+    BottomNavItem.Runs,
 )
 
 @Composable

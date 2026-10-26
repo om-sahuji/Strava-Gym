@@ -124,6 +124,7 @@
     <string name="strava_manual_exchange">Exchange code</string>
     <string name="strava_setup_help">Setup: create an API application at strava.com/settings/api with “Authorization Callback Domain” set to localhost. Then enter its Client ID and Client Secret here. Only running activities are imported; data stays on this device.</string>
     <string name="screen_runs">Runs</string>
+    <string name="screen_run_history">History</string>
     <string name="screen_run_detail">Run</string>
     <string name="runs_empty_title">No runs yet</string>
     <string name="runs_empty_connect">Connect Strava in Settings to import your runs.</string>
