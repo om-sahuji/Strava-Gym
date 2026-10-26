@@ -26,6 +26,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.noahjutz.gymroutines.data.dao.ExerciseDao
 import com.noahjutz.gymroutines.data.dao.RoutineDao
+import com.noahjutz.gymroutines.data.dao.RunDao
 import com.noahjutz.gymroutines.data.dao.WorkoutDao
 import com.noahjutz.gymroutines.data.domain.*
 import kotlinx.serialization.json.*
@@ -39,8 +40,9 @@ import kotlinx.serialization.json.*
         RoutineSetGroup::class,
         WorkoutSet::class,
         WorkoutSetGroup::class,
+        Run::class,
     ],
-    version = 43,
+    version = 44,
     autoMigrations = [AutoMigration(from = 35, to = 36)],
     exportSchema = true
 )
@@ -49,6 +51,32 @@ abstract class AppDatabase : RoomDatabase() {
     abstract val exerciseDao: ExerciseDao
     abstract val routineDao: RoutineDao
     abstract val workoutDao: WorkoutDao
+    abstract val runDao: RunDao
+}
+
+/**
+ * Adds `run_table` for running activities imported from Strava. Existing tables are untouched.
+ */
+val MIGRATION_43_44 = object : Migration(43, 44) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS run_table (
+                stravaId INTEGER NOT NULL PRIMARY KEY,
+                name TEXT NOT NULL,
+                startTimeEpochSec INTEGER NOT NULL,
+                distanceMeters REAL NOT NULL,
+                movingTimeSec INTEGER NOT NULL,
+                elapsedTimeSec INTEGER NOT NULL,
+                elevationGainM REAL NOT NULL,
+                avgHeartRate REAL,
+                summaryPolyline TEXT,
+                sportType TEXT NOT NULL
+            )
+            """.trimIndent()
+        )
+        db.execSQL("CREATE INDEX IF NOT EXISTS index_run_table_startTimeEpochSec ON run_table(startTimeEpochSec)")
+    }
 }
 
 /**

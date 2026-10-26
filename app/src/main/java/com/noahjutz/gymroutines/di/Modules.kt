@@ -49,6 +49,7 @@ val koinModule = module {
                 MIGRATION_40_41,
                 MIGRATION_41_42,
                 MIGRATION_42_43,
+                MIGRATION_43_44,
             )
             .build()
     }
@@ -70,6 +71,10 @@ val koinModule = module {
     }
 
     factory {
+        get<AppDatabase>().runDao
+    }
+
+    factory {
         WorkoutRepository(workoutDao = get())
     }
 
@@ -79,6 +84,10 @@ val koinModule = module {
 
     factory {
         ExerciseRepository(exerciseDao = get())
+    }
+
+    factory {
+        RunRepository(runDao = get())
     }
 
     viewModel {

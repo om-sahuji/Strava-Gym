@@ -20,6 +20,7 @@ package com.noahjutz.gymroutines.data
 
 import com.noahjutz.gymroutines.data.dao.ExerciseDao
 import com.noahjutz.gymroutines.data.dao.RoutineDao
+import com.noahjutz.gymroutines.data.dao.RunDao
 import com.noahjutz.gymroutines.data.dao.WorkoutDao
 import com.noahjutz.gymroutines.data.domain.*
 import kotlinx.coroutines.flow.Flow
@@ -122,6 +123,30 @@ class RoutineRepository(private val routineDao: RoutineDao) {
 
     suspend fun getSetGroup(id: Int): RoutineSetGroup? {
         return routineDao.getSetGroup(id)
+    }
+}
+
+class RunRepository(private val runDao: RunDao) {
+    val runs = runDao.getAllOrderedByDateDesc()
+
+    suspend fun upsert(runs: List<Run>) {
+        runDao.upsert(runs)
+    }
+
+    suspend fun getRuns(): List<Run> {
+        return runDao.getRuns()
+    }
+
+    suspend fun getBetween(start: Long, end: Long): List<Run> {
+        return runDao.getBetween(start, end)
+    }
+
+    suspend fun getRun(stravaId: Long): Run? {
+        return runDao.getRun(stravaId)
+    }
+
+    suspend fun deleteAll() {
+        runDao.deleteAll()
     }
 }
 
