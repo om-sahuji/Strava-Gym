@@ -40,6 +40,7 @@ data class StravaSettingsState(
     val isBusy: Boolean = false,
     @StringRes val message: Int? = null,
     val messageDetail: String? = null,
+    val isError: Boolean = false,
     val hasPendingCode: Boolean = false,
 )
 
@@ -65,7 +66,8 @@ class StravaSettingsViewModel(
                 StravaAuthCallback.consumeError()
                 _state.value = _state.value.copy(
                     message = R.string.strava_error_generic,
-                    messageDetail = error
+                    messageDetail = error,
+                    isError = true,
                 )
             }
         }
@@ -91,6 +93,7 @@ class StravaSettingsViewModel(
             isConnected = credentials.isConnected,
             message = R.string.strava_credentials_saved,
             messageDetail = null,
+            isError = false,
         )
     }
 
@@ -102,11 +105,12 @@ class StravaSettingsViewModel(
         if (url == null) {
             _state.value = _state.value.copy(
                 message = R.string.strava_error_missing_credentials,
-                messageDetail = null
+                messageDetail = null,
+                isError = true,
             )
             return
         }
-        _state.value = _state.value.copy(message = null, messageDetail = null)
+        _state.value = _state.value.copy(message = null, messageDetail = null, isError = false)
         application.openUrl(url)
     }
 
@@ -116,7 +120,8 @@ class StravaSettingsViewModel(
         if (code.isBlank()) {
             _state.value = _state.value.copy(
                 message = R.string.strava_error_invalid_code,
-                messageDetail = null
+                messageDetail = null,
+                isError = true,
             )
             return
         }
@@ -127,7 +132,12 @@ class StravaSettingsViewModel(
 
     private fun exchange(code: String) {
         if (_state.value.isBusy) return
-        _state.value = _state.value.copy(isBusy = true, message = null, messageDetail = null)
+        _state.value = _state.value.copy(
+            isBusy = true,
+            message = null,
+            messageDetail = null,
+            isError = false,
+        )
         viewModelScope.launch {
             val result = client.connectWithCode(code)
             _state.value = when (result) {
@@ -137,30 +147,35 @@ class StravaSettingsViewModel(
                     hasPendingCode = false,
                     message = R.string.strava_connected,
                     messageDetail = null,
+                    isError = false,
                 )
                 is StravaResult.HttpError -> _state.value.copy(
                     isBusy = false,
                     hasPendingCode = false,
                     message = R.string.strava_error_exchange,
                     messageDetail = "HTTP ${result.code}",
+                    isError = true,
                 )
                 is StravaResult.NetworkError -> _state.value.copy(
                     isBusy = false,
                     hasPendingCode = false,
                     message = R.string.strava_error_network,
                     messageDetail = result.message,
+                    isError = true,
                 )
                 StravaResult.NotConfigured -> _state.value.copy(
                     isBusy = false,
                     hasPendingCode = false,
                     message = R.string.strava_error_missing_credentials,
                     messageDetail = null,
+                    isError = true,
                 )
                 StravaResult.NotConnected -> _state.value.copy(
                     isBusy = false,
                     hasPendingCode = false,
                     message = R.string.strava_error_generic,
                     messageDetail = null,
+                    isError = true,
                 )
             }
         }
@@ -172,6 +187,7 @@ class StravaSettingsViewModel(
             isConnected = false,
             message = R.string.strava_disconnected,
             messageDetail = null,
+            isError = false,
         )
     }
 

@@ -151,7 +151,11 @@ fun StravaSettings(
                     text = stringResource(message) +
                         (state.messageDetail?.let { " ($it)" } ?: ""),
                     style = MaterialTheme.typography.body2,
-                    color = MaterialTheme.colors.error,
+                    color = if (state.isError) {
+                        MaterialTheme.colors.error
+                    } else {
+                        MaterialTheme.colors.onSurface.copy(alpha = 0.8f)
+                    },
                 )
             }
 
